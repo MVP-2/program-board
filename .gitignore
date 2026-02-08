@@ -16,6 +16,9 @@ dist/
 # Local / account
 .account
 
+# Supabase seed（本番・環境別の初期データを含むため非公開）
+supabase/seed.sql
+
 # Docs (local only)
 docs/
 

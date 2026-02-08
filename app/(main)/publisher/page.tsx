@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { listProgramsByPublisher } from "@/lib/repositories/programs";
+import { getParticipationCountsByProgramIds } from "@/lib/repositories/participations";
 
 export default async function PublisherPage() {
   const supabase = await createClient();
@@ -13,6 +14,9 @@ export default async function PublisherPage() {
   }
 
   const programsList = await listProgramsByPublisher(user.id);
+  const participationCounts = await getParticipationCountsByProgramIds(
+    programsList.map((p) => p.id)
+  );
 
   return (
     <div className="space-y-6">
@@ -22,7 +26,7 @@ export default async function PublisherPage() {
           href="/publisher/programs/new"
           className="rounded-md border px-3 py-2 text-sm hover:bg-accent"
         >
-          プログラムを登録
+          新規プログラムを登録
         </Link>
       </div>
 
@@ -37,21 +41,18 @@ export default async function PublisherPage() {
             {programsList.map((p) => (
               <li key={p.id} className="flex items-center gap-4 rounded border p-3">
                 <div className="flex-1">
-                  <Link
-                    href={`/publisher/programs/${p.id}`}
-                    className="font-medium hover:underline"
-                  >
-                    {p.title}
-                  </Link>
+                  <span className="font-medium">{p.title}</span>
                   <p className="text-sm text-muted-foreground">
                     {p.status === "open" ? "募集中" : "締切"}
+                    {" ・ "}
+                    参加者: {participationCounts[p.id] ?? 0} 名
                   </p>
                 </div>
                 <Link
-                  href={`/publisher/programs/${p.id}/participants`}
-                  className="text-sm text-primary hover:underline"
+                  href={`/publisher/programs/${p.id}`}
+                  className="rounded-md border px-3 py-2 text-sm hover:bg-accent"
                 >
-                  参加者一覧
+                  詳細
                 </Link>
               </li>
             ))}

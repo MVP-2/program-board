@@ -76,3 +76,10 @@ export async function updateProgram(
   if (!row || row.createdBy !== publisherId) return null;
   return row;
 }
+
+export async function deleteProgram(id: string, publisherId: string) {
+  const program = await getProgram(id);
+  if (!program || program.createdBy !== publisherId) return false;
+  await db.delete(programs).where(eq(programs.id, id));
+  return true;
+}

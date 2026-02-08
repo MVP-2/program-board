@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { listStudents } from "@/lib/repositories/students";
+import { listPublishers } from "../actions";
 
 export async function GET() {
   const supabase = await createClient();
@@ -12,19 +13,29 @@ export async function GET() {
     return NextResponse.redirect(new URL("/login", url));
   }
 
-  const list = await listStudents();
-  const header = "StudentID,メールアドレス,名前,登録日\n";
-  const rows = list.map(
+  const [students, publishers] = await Promise.all([
+    listStudents(),
+    listPublishers(),
+  ]);
+
+  const header =
+    "種別,ID,メールアドレス,名前,登録日\n";
+
+  const studentRows = students.map(
     (s) =>
-      `${s.id},${escapeCsv(s.email)},${escapeCsv(s.name)},${formatDate(s.createdAt)}`
+      `生徒,${s.id},${escapeCsv(s.email)},${escapeCsv(s.name)},${formatDate(s.createdAt)}`
   );
-  const csv = header + rows.join("\n");
+  const publisherRows = publishers.map(
+    (p) => `掲載者,${p.id},${escapeCsv(p.email)},${escapeCsv(p.name)},`
+  );
+
+  const csv = header + studentRows.join("\n") + "\n" + publisherRows.join("\n");
   const bom = "\uFEFF";
 
   return new NextResponse(bom + csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="students.csv"',
+      "Content-Disposition": 'attachment; filename="admin_export.csv"',
     },
   });
 }

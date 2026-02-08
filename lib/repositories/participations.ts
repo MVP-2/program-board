@@ -1,8 +1,27 @@
 "use server";
 
+import { count, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { participations, programs, students } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and } from "drizzle-orm";
+
+export async function getParticipationCountsByProgramIds(
+  programIds: string[]
+): Promise<Record<string, number>> {
+  if (programIds.length === 0) return {};
+  const rows = await db
+    .select({
+      programId: participations.programId,
+      count: count(),
+    })
+    .from(participations)
+    .where(inArray(participations.programId, programIds))
+    .groupBy(participations.programId);
+  const result: Record<string, number> = {};
+  for (const id of programIds) result[id] = 0;
+  for (const row of rows) result[row.programId] = Number(row.count);
+  return result;
+}
 
 export async function listParticipationsByProgram(programId: string) {
   return db

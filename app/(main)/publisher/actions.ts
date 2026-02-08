@@ -1,7 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createProgram, updateProgram } from "@/lib/repositories/programs";
+import {
+  createProgram,
+  updateProgram,
+  deleteProgram,
+} from "@/lib/repositories/programs";
 import { createClient } from "@/lib/supabase/server";
 
 async function ensurePublisher() {
@@ -73,5 +77,20 @@ export async function updateProgramAction(
   if (!updated) return { error: "プログラムが見つからないか、編集権限がありません" };
   revalidatePath("/publisher");
   revalidatePath(`/publisher/programs/${programId}`);
+  return { success: true };
+}
+
+export async function deleteProgramAction(
+  programId: string,
+  publisherId: string
+): Promise<{ error?: string; success?: boolean }> {
+  const userId = await ensurePublisher();
+  if (!userId || userId !== publisherId) {
+    return { error: "掲載側のみ実行できます" };
+  }
+
+  const ok = await deleteProgram(programId, publisherId);
+  if (!ok) return { error: "プログラムが見つからないか、削除権限がありません" };
+  revalidatePath("/publisher");
   return { success: true };
 }

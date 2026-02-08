@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useEffect, useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createProgramAction, updateProgramAction } from "../actions";
+import { DeleteProgramButton } from "./delete-program-button";
 
 type ProgramFormProps = {
   publisherId: string;
@@ -33,14 +34,15 @@ export function ProgramForm({
     {}
   );
 
-  if (state?.success && !isEdit) {
-    router.push("/publisher");
-    router.refresh();
-    return null;
-  }
-  if (state?.success && isEdit) {
-    router.refresh();
-  }
+  useEffect(() => {
+    if (state?.success && !isEdit) {
+      router.push("/publisher");
+      router.refresh();
+    } else if (state?.success && isEdit && programId) {
+      router.push(`/publisher/programs/${programId}`);
+      router.refresh();
+    }
+  }, [state?.success, isEdit, programId, router]);
 
   return (
     <form action={formAction} className="mt-4 max-w-xl space-y-4">
@@ -118,9 +120,17 @@ export function ProgramForm({
       {state?.error && (
         <p className="text-sm text-destructive">{state.error}</p>
       )}
-      <Button type="submit" disabled={isPending}>
-        {isPending ? "保存中…" : isEdit ? "更新" : "登録"}
-      </Button>
+      <div className="flex gap-3">
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "保存中…" : isEdit ? "更新" : "登録"}
+        </Button>
+        {isEdit && programId && (
+          <DeleteProgramButton
+            programId={programId}
+            publisherId={publisherId}
+          />
+        )}
+      </div>
     </form>
   );
 }
