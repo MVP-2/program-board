@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import type { AppRole } from "@/lib/supabase/middleware";
+import { createClient } from "@/lib/supabase/server";
 
 const ROLE_HOME: Record<AppRole, string> = {
   admin: "/admin",
@@ -14,6 +14,6 @@ export default async function HomePage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
-  const role = (user.app_metadata["role"] as AppRole) ?? "student";
+  const role = (user.app_metadata.role as AppRole) ?? "student";
   redirect(ROLE_HOME[role] ?? "/student");
 }

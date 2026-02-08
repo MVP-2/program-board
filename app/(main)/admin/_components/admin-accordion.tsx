@@ -1,8 +1,10 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 function AccordionItem({
   title,
   children,
@@ -13,10 +15,7 @@ function AccordionItem({
   defaultOpen?: boolean;
 }) {
   return (
-    <details
-      className="group border-b last:border-b-0"
-      open={defaultOpen}
-    >
+    <details className="group" open={defaultOpen}>
       <summary className="flex cursor-pointer list-none items-center justify-between py-4 font-medium hover:underline [&::-webkit-details-marker]:hidden">
         {title}
         <ChevronDown className="size-4 shrink-0 transition-transform duration-200 group-open:rotate-180" />
@@ -29,7 +28,7 @@ function AccordionItem({
 type AdminAccordionProps = {
   programListContent: ReactNode;
   createStudentContent: ReactNode;
-  createAdminContent: ReactNode;
+  createPublisherContent: ReactNode;
   listStudentsContent: ReactNode;
   listPublishersContent: ReactNode;
 };
@@ -37,21 +36,21 @@ type AdminAccordionProps = {
 export function AdminAccordion({
   programListContent,
   createStudentContent,
-  createAdminContent,
+  createPublisherContent,
   listStudentsContent,
   listPublishersContent,
 }: AdminAccordionProps) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-lg border">
+      <div className="rounded-lg divide-y divide-border">
         <AccordionItem title="掲載状況（プログラム一覧）" defaultOpen>
           {programListContent}
         </AccordionItem>
         <AccordionItem title="アカウント作成: 生徒">
           {createStudentContent}
         </AccordionItem>
-        <AccordionItem title="アカウント作成: 管理者">
-          {createAdminContent}
+        <AccordionItem title="アカウント作成: 掲載者">
+          {createPublisherContent}
         </AccordionItem>
         <AccordionItem title="一覧: 生徒">{listStudentsContent}</AccordionItem>
         <AccordionItem title="一覧: 掲載者">
@@ -59,12 +58,11 @@ export function AdminAccordion({
         </AccordionItem>
       </div>
 
-      <Link
-        href="/admin/csv"
-        className="w-fit rounded-md border px-3 py-2 text-sm hover:bg-accent"
-      >
-        CSV 出力（生徒一覧・掲載者一覧をすべて出力）
-      </Link>
+      <Button variant="outline" size="sm" asChild>
+        <Link href="/admin/csv">
+          CSV 出力（生徒一覧・掲載者一覧をすべて出力）
+        </Link>
+      </Button>
     </div>
   );
 }

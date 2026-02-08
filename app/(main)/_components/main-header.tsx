@@ -1,7 +1,7 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export function MainHeader() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export function MainHeader() {
   }
 
   const name =
-    (user?.user_metadata?.["name"] as string | undefined)?.trim() ?? "未設定";
+    (user?.user_metadata?.name as string | undefined)?.trim() ?? "未設定";
   const email = user?.email ?? "";
 
   return (

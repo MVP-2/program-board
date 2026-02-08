@@ -1,14 +1,14 @@
 "use server";
 
-import { createClient as createSupabaseServer } from "@/lib/supabase/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
+import { revalidatePath } from "next/cache";
 import { db } from "@/db/drizzle";
 import { students } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { createClient as createSupabaseServer } from "@/lib/supabase/server";
 
 export async function createStudentAccount(
   _prev: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<{ error?: string }> {
   const email = (formData.get("email") as string)?.trim();
   const name = (formData.get("name") as string)?.trim();
@@ -25,13 +25,13 @@ export async function createStudentAccount(
   const {
     data: { user: me },
   } = await supabase.auth.getUser();
-  const role = me?.app_metadata["role"];
+  const role = me?.app_metadata.role;
   if (role !== "admin") {
     return { error: "管理者のみ実行できます" };
   }
 
-  const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
-  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return { error: "サーバー設定エラー" };
 
   const admin = createSupabaseAdmin(url, key);
@@ -64,9 +64,9 @@ export async function createStudentAccount(
   return {};
 }
 
-export async function createAdminAccount(
+export async function createPublisherAccount(
   _prev: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<{ error?: string }> {
   const email = (formData.get("email") as string)?.trim();
   const name = (formData.get("name") as string)?.trim();
@@ -83,13 +83,13 @@ export async function createAdminAccount(
   const {
     data: { user: me },
   } = await supabase.auth.getUser();
-  const role = me?.app_metadata["role"];
+  const role = me?.app_metadata.role;
   if (role !== "admin") {
     return { error: "管理者のみ実行できます" };
   }
 
-  const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
-  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return { error: "サーバー設定エラー" };
 
   const admin = createSupabaseAdmin(url, key);
@@ -98,7 +98,7 @@ export async function createAdminAccount(
     password,
     email_confirm: true,
     user_metadata: { name },
-    app_metadata: { role: "admin" },
+    app_metadata: { role: "publisher" },
   });
 
   if (createError) {
@@ -118,12 +118,12 @@ export async function listPublishers(): Promise<PublisherItem[]> {
   const {
     data: { user: me },
   } = await supabase.auth.getUser();
-  if ((me?.app_metadata["role"] as string) !== "admin") {
+  if ((me?.app_metadata.role as string) !== "admin") {
     return [];
   }
 
-  const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
-  const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return [];
 
   const admin = createSupabaseAdmin(url, key);

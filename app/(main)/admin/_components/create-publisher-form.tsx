@@ -4,12 +4,12 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createAdminAccount } from "../actions";
+import { createPublisherAccount } from "../actions";
 
-export function CreateAdminForm() {
+export function CreatePublisherForm() {
   const [state, formAction, isPending] = useActionState(
-    createAdminAccount,
-    {}
+    createPublisherAccount,
+    {},
   );
 
   return (
@@ -20,7 +20,7 @@ export function CreateAdminForm() {
           id="email"
           name="email"
           type="email"
-          placeholder="admin@example.com"
+          placeholder="publisher@example.com"
           required
           className="mt-1"
         />
@@ -30,7 +30,7 @@ export function CreateAdminForm() {
         <Input
           id="name"
           name="name"
-          placeholder="管理者名"
+          placeholder="掲載者名"
           required
           className="mt-1"
         />
@@ -51,7 +51,7 @@ export function CreateAdminForm() {
         <p className="text-sm text-destructive">{state.error}</p>
       )}
       <Button type="submit" disabled={isPending}>
-        {isPending ? "作成中…" : "管理者アカウントを作成"}
+        {isPending ? "作成中…" : "掲載者アカウントを作成"}
       </Button>
     </form>
   );

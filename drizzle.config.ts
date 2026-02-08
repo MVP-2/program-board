@@ -3,7 +3,7 @@ import { defineConfig } from "drizzle-kit";
 
 config({ path: ".env.local" });
 
-const postgresUrl = process.env["POSTGRES_URL"];
+const postgresUrl = process.env.POSTGRES_URL;
 if (!postgresUrl) {
   throw new Error("Missing POSTGRES_URL in .env.local");
 }

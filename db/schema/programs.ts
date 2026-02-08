@@ -10,6 +10,10 @@ export const programs = pgTable("programs", {
   periodFormat: text("period_format").notNull(),
   status: text("status", { enum: programStatusEnum }).notNull().default("open"),
   createdBy: uuid("created_by").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdateFn(() => new Date()),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdateFn(
+    () => new Date(),
+  ),
 });

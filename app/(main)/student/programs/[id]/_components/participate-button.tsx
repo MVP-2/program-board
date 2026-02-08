@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { participateAction } from "../../../actions";
 
@@ -16,7 +16,7 @@ export function ParticipateButton({ programId }: { programId: string }) {
     try {
       await participateAction(programId);
       router.refresh();
-    } catch (e) {
+    } catch (_e) {
       alert("参加申込に失敗しました");
     }
     setPending(false);

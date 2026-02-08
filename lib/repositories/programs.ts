@@ -1,8 +1,8 @@
 "use server";
 
+import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { programs } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
 
 export async function listAllPrograms() {
   return db.select().from(programs).orderBy(desc(programs.createdAt));
@@ -41,7 +41,7 @@ export async function createProgram(
     theme: string;
     periodFormat: string;
     status: "open" | "closed";
-  }
+  },
 ) {
   const [row] = await db
     .insert(programs)
@@ -66,7 +66,7 @@ export async function updateProgram(
     theme: string;
     periodFormat: string;
     status: "open" | "closed";
-  }>
+  }>,
 ) {
   const [row] = await db
     .update(programs)

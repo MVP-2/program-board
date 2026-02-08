@@ -1,7 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { getProgram } from "@/lib/repositories/programs";
+import { createClient } from "@/lib/supabase/server";
 import { ProgramForm } from "../../../_components/program-form";
 
 export default async function PublisherProgramEditPage({
@@ -14,7 +15,7 @@ export default async function PublisherProgramEditPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || (user.app_metadata["role"] as string) !== "publisher") {
+  if (!user || (user.app_metadata.role as string) !== "publisher") {
     redirect("/login");
   }
 
@@ -24,14 +25,11 @@ export default async function PublisherProgramEditPage({
   }
 
   return (
-    <div>
-      <Link
-        href={`/publisher/programs/${id}`}
-        className="text-sm text-muted-foreground hover:underline"
-      >
-        ← 詳細に戻る
-      </Link>
-      <h1 className="mt-4 text-xl font-semibold">プログラムを編集</h1>
+    <div className="space-y-6">
+      <Button variant="link" size="sm" asChild>
+        <Link href={`/publisher/programs/${id}`}>← 詳細に戻る</Link>
+      </Button>
+      <h1 className="text-xl font-semibold">プログラムを編集</h1>
       <ProgramForm
         publisherId={user.id}
         programId={id}

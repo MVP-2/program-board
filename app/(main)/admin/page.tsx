@@ -1,20 +1,29 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { listStudents } from "@/lib/repositories/students";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { listAllPrograms } from "@/lib/repositories/programs";
-import { listPublishers } from "./actions";
-import { AdminStudentList } from "./_components/admin-student-list";
-import { AdminPublisherList } from "./_components/admin-publisher-list";
-import { CreateStudentForm } from "./_components/create-student-form";
-import { CreateAdminForm } from "./_components/create-admin-form";
+import { listStudents } from "@/lib/repositories/students";
+import { createClient } from "@/lib/supabase/server";
 import { AdminAccordion } from "./_components/admin-accordion";
+import { AdminPublisherList } from "./_components/admin-publisher-list";
+import { AdminStudentList } from "./_components/admin-student-list";
+import { CreatePublisherForm } from "./_components/create-publisher-form";
+import { CreateStudentForm } from "./_components/create-student-form";
+import { listPublishers } from "./actions";
 
 export default async function AdminPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || (user.app_metadata["role"] as string) !== "admin") {
+  if (!user || (user.app_metadata.role as string) !== "admin") {
     redirect("/login");
   }
 
@@ -28,26 +37,28 @@ export default async function AdminPage() {
     programList.length === 0 ? (
       <p className="text-muted-foreground">プログラムはまだありません。</p>
     ) : (
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="px-4 py-2 text-left font-medium">プログラム名</th>
-              <th className="px-4 py-2 text-left font-medium">募集状態</th>
-            </tr>
-          </thead>
-          <tbody>
-            {programList.map((p) => (
-              <tr key={p.id} className="border-b last:border-0">
-                <td className="px-4 py-2">{p.title}</td>
-                <td className="px-4 py-2">
-                  {p.status === "open" ? "募集中" : "締切"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table className="[&_tr]:border-border/50">
+        <TableHeader>
+          <TableRow>
+            <TableHead>プログラム名</TableHead>
+            <TableHead>募集状態</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {programList.map((p) => (
+            <TableRow key={p.id}>
+              <TableCell className="font-medium">{p.title}</TableCell>
+              <TableCell>
+                {p.status === "open" ? (
+                  <Badge variant="default">募集中</Badge>
+                ) : (
+                  <Badge variant="secondary">締切</Badge>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     );
 
   return (
@@ -57,7 +68,7 @@ export default async function AdminPage() {
       <AdminAccordion
         programListContent={programListContent}
         createStudentContent={<CreateStudentForm />}
-        createAdminContent={<CreateAdminForm />}
+        createPublisherContent={<CreatePublisherForm />}
         listStudentsContent={<AdminStudentList initialList={studentList} />}
         listPublishersContent={
           <AdminPublisherList initialList={publisherList} />

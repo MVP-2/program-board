@@ -9,8 +9,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { AppRole } from "@/lib/supabase/middleware";
 import { createClient } from "@/lib/supabase/client";
+import type { AppRole } from "@/lib/supabase/middleware";
 
 interface AuthContextType {
   user: User | null;
@@ -37,7 +37,7 @@ export function AuthProvider({
     supabase.auth.getSession().then(({ data: { session } }) => {
       const u = session?.user ?? null;
       setUser(u);
-      setRole((u?.app_metadata["role"] as AppRole) ?? null);
+      setRole((u?.app_metadata.role as AppRole) ?? null);
       setLoading(false);
     });
 
@@ -46,22 +46,19 @@ export function AuthProvider({
     } = supabase.auth.onAuthStateChange((_event, session) => {
       const u = session?.user ?? null;
       setUser(u);
-      setRole((u?.app_metadata["role"] as AppRole) ?? null);
+      setRole((u?.app_metadata.role as AppRole) ?? null);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = useCallback(
-    async (email: string, password: string) => {
-      const { error } = await createClient().auth.signInWithPassword({
-        email,
-        password,
-      });
-      return { error };
-    },
-    []
-  );
+  const signIn = useCallback(async (email: string, password: string) => {
+    const { error } = await createClient().auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { error };
+  }, []);
 
   const signOut = useCallback(async () => {
     await createClient().auth.signOut();
@@ -73,7 +70,7 @@ export function AuthProvider({
       data: { user: u },
     } = await supabase.auth.getUser();
     setUser(u);
-    setRole((u?.app_metadata["role"] as AppRole) ?? null);
+    setRole((u?.app_metadata.role as AppRole) ?? null);
   }, []);
 
   return (

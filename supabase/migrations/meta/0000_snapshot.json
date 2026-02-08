@@ -155,12 +155,8 @@
           "name": "participations_program_id_programs_id_fk",
           "tableFrom": "participations",
           "tableTo": "programs",
-          "columnsFrom": [
-            "program_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["program_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -170,10 +166,7 @@
         "participations_program_user": {
           "name": "participations_program_user",
           "nullsNotDistinct": false,
-          "columns": [
-            "program_id",
-            "user_id"
-          ]
+          "columns": ["program_id", "user_id"]
         }
       },
       "policies": {},

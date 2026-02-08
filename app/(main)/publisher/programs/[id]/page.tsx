@@ -1,8 +1,19 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import { getProgram } from "@/lib/repositories/programs";
+import { notFound, redirect } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { listParticipationsByProgram } from "@/lib/repositories/participations";
+import { getProgram } from "@/lib/repositories/programs";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function PublisherProgramDetailPage({
   params,
@@ -14,7 +25,7 @@ export default async function PublisherProgramDetailPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || (user.app_metadata["role"] as string) !== "publisher") {
+  if (!user || (user.app_metadata.role as string) !== "publisher") {
     redirect("/login");
   }
 
@@ -27,54 +38,52 @@ export default async function PublisherProgramDetailPage({
 
   return (
     <div className="space-y-8">
-      <div>
-        <Link
-          href="/publisher"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          ← 一覧へ
-        </Link>
-      </div>
+      <Button variant="link" size="sm" asChild>
+        <Link href="/publisher">← 一覧へ</Link>
+      </Button>
 
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold">{program.title}</h1>
-          <Link
-            href={`/publisher/programs/${id}/edit`}
-            className="rounded-md border px-3 py-2 text-sm hover:bg-accent"
-          >
-            編集
-          </Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/publisher/programs/${id}/edit`}>編集</Link>
+          </Button>
         </div>
 
-        <div className="space-y-3 rounded-md border p-4">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              概要・説明
-            </p>
-            <p className="mt-1 whitespace-pre-wrap">{program.description}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              課題テーマ
-            </p>
-            <p className="mt-1">{program.theme}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              期間・実施形態
-            </p>
-            <p className="mt-1">{program.periodFormat}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              募集状態
-            </p>
-            <p className="mt-1">
-              {program.status === "open" ? "募集中" : "締切"}
-            </p>
-          </div>
-        </div>
+        <Card>
+          <CardContent className="space-y-4 pt-6">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                概要・説明
+              </p>
+              <p className="mt-1 whitespace-pre-wrap">{program.description}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                課題テーマ
+              </p>
+              <p className="mt-1">{program.theme}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                期間・実施形態
+              </p>
+              <p className="mt-1">{program.periodFormat}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                募集状態
+              </p>
+              <div className="mt-1">
+                {program.status === "open" ? (
+                  <Badge variant="default">募集中</Badge>
+                ) : (
+                  <Badge variant="secondary">締切</Badge>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </section>
 
       <section>
@@ -82,31 +91,29 @@ export default async function PublisherProgramDetailPage({
         {participants.length === 0 ? (
           <p className="text-muted-foreground">まだ参加者はいません。</p>
         ) : (
-          <div className="overflow-x-auto rounded-md border">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="px-4 py-2 text-left font-medium">名前</th>
-                  <th className="px-4 py-2 text-left font-medium">
-                    メールアドレス
-                  </th>
-                  <th className="px-4 py-2 text-left font-medium">参加日</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>名前</TableHead>
+                  <TableHead>メールアドレス</TableHead>
+                  <TableHead>参加日</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {participants.map((p) => (
-                  <tr key={p.id} className="border-b last:border-0">
-                    <td className="px-4 py-2">{p.studentName}</td>
-                    <td className="px-4 py-2">{p.studentEmail}</td>
-                    <td className="px-4 py-2 text-muted-foreground">
+                  <TableRow key={p.id}>
+                    <TableCell>{p.studentName}</TableCell>
+                    <TableCell>{p.studentEmail}</TableCell>
+                    <TableCell className="text-muted-foreground">
                       {p.createdAt instanceof Date
                         ? p.createdAt.toLocaleDateString("ja-JP")
                         : new Date(p.createdAt).toLocaleDateString("ja-JP")}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </section>

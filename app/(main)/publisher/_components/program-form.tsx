@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useActionState } from "react";
 import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,7 @@ export function ProgramForm({
     isEdit && programId
       ? updateProgramAction.bind(null, programId, publisherId)
       : createProgramAction.bind(null, publisherId),
-    {}
+    {},
   );
 
   useEffect(() => {
@@ -114,9 +114,7 @@ export function ProgramForm({
           </div>
         </div>
       )}
-      {!isEdit && (
-        <input type="hidden" name="status" value="open" />
-      )}
+      {!isEdit && <input type="hidden" name="status" value="open" />}
       {state?.error && (
         <p className="text-sm text-destructive">{state.error}</p>
       )}

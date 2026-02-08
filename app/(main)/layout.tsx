@@ -1,11 +1,7 @@
 import type { ReactNode } from "react";
 import { MainHeader } from "./_components/main-header";
 
-export default function MainLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function MainLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
       <header className="border-b bg-card px-4 py-3">

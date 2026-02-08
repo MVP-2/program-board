@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { deleteProgramAction } from "../actions";
 
@@ -17,7 +17,7 @@ export function DeleteProgramButton({
 
   async function handleClick() {
     const ok = window.confirm(
-      "本当に削除しますか？\n参加した生徒の申込データも同時に削除されます。"
+      "本当に削除しますか？\n参加した生徒の申込データも同時に削除されます。",
     );
     if (!ok) return;
 

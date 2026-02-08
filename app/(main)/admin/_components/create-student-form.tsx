@@ -9,7 +9,7 @@ import { createStudentAccount } from "../actions";
 export function CreateStudentForm() {
   const [state, formAction, isPending] = useActionState(
     createStudentAccount,
-    {}
+    {},
   );
 
   return (

@@ -22,7 +22,9 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const FormFieldContext = React.createContext<FormFieldContextValue | null>(null);
+const FormFieldContext = React.createContext<FormFieldContextValue | null>(
+  null,
+);
 
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
@@ -46,10 +48,10 @@ const useFormField = (): {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
   const { getFieldState, formState } = useFormContext();
-  const fieldState = getFieldState(fieldContext!.name, formState);
+  const fieldState = getFieldState(fieldContext?.name ?? "", formState);
 
   return {
-    name: fieldContext!.name,
+    name: fieldContext?.name ?? "",
     invalid: !!fieldState?.error,
     error: fieldState?.error,
     formItemId: `${itemContext.id}-form-item`,

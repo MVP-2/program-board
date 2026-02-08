@@ -8,11 +8,7 @@ export const metadata: Metadata = {
   description: "探究プログラムの掲載・参加のためのプラットフォーム",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">

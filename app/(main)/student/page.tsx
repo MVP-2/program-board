@@ -1,8 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { listOpenPrograms } from "@/lib/repositories/programs";
-import { listParticipationsByUser } from "@/lib/repositories/participations";
+import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,13 +8,16 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
+import { listParticipationsByUser } from "@/lib/repositories/participations";
+import { listOpenPrograms } from "@/lib/repositories/programs";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function StudentPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || (user.app_metadata["role"] as string) !== "student") {
+  if (!user || (user.app_metadata.role as string) !== "student") {
     redirect("/login");
   }
 
@@ -26,7 +26,7 @@ export default async function StudentPage() {
     listParticipationsByUser(user.id),
   ]);
   const participatedProgramIds = new Set(
-    myParticipations.map((p) => p.programId)
+    myParticipations.map((p) => p.programId),
   );
 
   return (
@@ -48,24 +48,22 @@ export default async function StudentPage() {
             <li key={p.id}>
               <Link href={`/student/programs/${p.id}`} className="block">
                 <Card className="transition-colors hover:bg-accent/50">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <CardContent className="p-0">
-                        <span className="font-medium">{p.title}</span>
-                        <CardDescription className="mt-1 line-clamp-1">
-                          {p.theme}
-                        </CardDescription>
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                          <span className="text-xs text-muted-foreground">
-                            {p.periodFormat} · 募集中
-                          </span>
-                          {participatedProgramIds.has(p.id) && (
-                            <Badge variant="success">参加済み</Badge>
-                          )}
-                        </div>
-                      </CardContent>
-                    </div>
+                  <CardHeader className="p-4 pb-2">
+                    <span className="font-medium">{p.title}</span>
+                    <CardDescription className="line-clamp-1">
+                      {p.theme}
+                    </CardDescription>
                   </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs text-muted-foreground">
+                        {p.periodFormat} · 募集中
+                      </span>
+                      {participatedProgramIds.has(p.id) && (
+                        <Badge variant="success">参加済み</Badge>
+                      )}
+                    </div>
+                  </CardContent>
                 </Card>
               </Link>
             </li>

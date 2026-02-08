@@ -1,7 +1,7 @@
-import { createClient as createSupabaseServer } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
 import { db } from "@/db/drizzle";
 import { students } from "@/db/schema";
-import { NextResponse } from "next/server";
+import { createClient as createSupabaseServer } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -16,10 +16,10 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const role = user.app_metadata["role"] as string | undefined;
+  const role = user.app_metadata.role as string | undefined;
   if (role === "student") {
     const name =
-      (user.user_metadata["name"] as string | undefined)?.trim() ?? "未設定";
+      (user.user_metadata.name as string | undefined)?.trim() ?? "未設定";
     const email = user.email ?? "";
     await db
       .insert(students)

@@ -9,7 +9,9 @@ export const participations = pgTable(
       .notNull()
       .references(() => programs.id, { onDelete: "cascade" }),
     userId: uuid("user_id").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
-  (t) => [unique("participations_program_user").on(t.programId, t.userId)]
+  (t) => [unique("participations_program_user").on(t.programId, t.userId)],
 );

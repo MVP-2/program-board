@@ -3,8 +3,8 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 const connectionString =
-  process.env["POSTGRES_URL"] ??
-  (process.env["NODE_ENV"] !== "production"
+  process.env.POSTGRES_URL ??
+  (process.env.NODE_ENV !== "production"
     ? "postgresql://postgres:postgres@127.0.0.1:54332/postgres"
     : undefined);
 

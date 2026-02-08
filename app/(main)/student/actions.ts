@@ -1,18 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
 import { participate } from "@/lib/repositories/participations";
+import { createClient } from "@/lib/supabase/server";
 
 export async function participateAction(
   programId: string,
-  _formData?: FormData
+  _formData?: FormData,
 ) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || (user.app_metadata["role"] as string) !== "student") {
+  if (!user || (user.app_metadata.role as string) !== "student") {
     return;
   }
   await participate(programId, user.id);

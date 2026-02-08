@@ -1,12 +1,11 @@
 "use server";
 
-import { count, eq, inArray } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { participations, programs, students } from "@/db/schema";
-import { and } from "drizzle-orm";
 
 export async function getParticipationCountsByProgramIds(
-  programIds: string[]
+  programIds: string[],
 ): Promise<Record<string, number>> {
   if (programIds.length === 0) return {};
   const rows = await db
@@ -74,8 +73,8 @@ export async function hasParticipated(programId: string, userId: string) {
     .where(
       and(
         eq(participations.programId, programId),
-        eq(participations.userId, userId)
-      )
+        eq(participations.userId, userId),
+      ),
     )
     .limit(1);
   return !!row;

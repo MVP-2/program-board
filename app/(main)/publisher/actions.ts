@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import {
   createProgram,
-  updateProgram,
   deleteProgram,
+  updateProgram,
 } from "@/lib/repositories/programs";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,7 +13,7 @@ async function ensurePublisher() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user || (user.app_metadata["role"] as string) !== "publisher") {
+  if (!user || (user.app_metadata.role as string) !== "publisher") {
     return null;
   }
   return user.id;
@@ -22,7 +22,7 @@ async function ensurePublisher() {
 export async function createProgramAction(
   publisherId: string,
   _prev: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const userId = await ensurePublisher();
   if (!userId || userId !== publisherId) {
@@ -33,7 +33,8 @@ export async function createProgramAction(
   const description = (formData.get("description") as string)?.trim();
   const theme = (formData.get("theme") as string)?.trim();
   const periodFormat = (formData.get("periodFormat") as string)?.trim();
-  const status = (formData.get("status") as string) === "closed" ? "closed" : "open";
+  const status =
+    (formData.get("status") as string) === "closed" ? "closed" : "open";
 
   if (!title || !description || !theme || !periodFormat) {
     return { error: "必須項目を入力してください" };
@@ -54,7 +55,7 @@ export async function updateProgramAction(
   programId: string,
   publisherId: string,
   _prev: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const userId = await ensurePublisher();
   if (!userId || userId !== publisherId) {
@@ -65,7 +66,8 @@ export async function updateProgramAction(
   const description = (formData.get("description") as string)?.trim();
   const theme = (formData.get("theme") as string)?.trim();
   const periodFormat = (formData.get("periodFormat") as string)?.trim();
-  const status = (formData.get("status") as string) === "closed" ? "closed" : "open";
+  const status =
+    (formData.get("status") as string) === "closed" ? "closed" : "open";
 
   const updated = await updateProgram(programId, publisherId, {
     title,
@@ -74,7 +76,8 @@ export async function updateProgramAction(
     periodFormat,
     status,
   });
-  if (!updated) return { error: "プログラムが見つからないか、編集権限がありません" };
+  if (!updated)
+    return { error: "プログラムが見つからないか、編集権限がありません" };
   revalidatePath("/publisher");
   revalidatePath(`/publisher/programs/${programId}`);
   return { success: true };
@@ -82,7 +85,7 @@ export async function updateProgramAction(
 
 export async function deleteProgramAction(
   programId: string,
-  publisherId: string
+  publisherId: string,
 ): Promise<{ error?: string; success?: boolean }> {
   const userId = await ensurePublisher();
   if (!userId || userId !== publisherId) {
