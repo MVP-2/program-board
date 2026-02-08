@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build / Next
+.next/
+out/
+build/
+dist/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Local / account
+.account
+
+# Docs (local only)
+docs/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.log
+
+# Vercel
+.vercel
+
+# Debug
+npm-debug.log*
+pnpm-debug.log*

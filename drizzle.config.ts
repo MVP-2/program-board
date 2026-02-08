@@ -1,0 +1,17 @@
+import { config } from "dotenv";
+import { defineConfig } from "drizzle-kit";
+
+config({ path: ".env.local" });
+
+const postgresUrl = process.env["POSTGRES_URL"];
+if (!postgresUrl) {
+  throw new Error("Missing POSTGRES_URL in .env.local");
+}
+
+export default defineConfig({
+  schema: "./db/schema/index.ts",
+  out: "./supabase/migrations",
+  dialect: "postgresql",
+  casing: "snake_case",
+  dbCredentials: { url: postgresUrl },
+});
