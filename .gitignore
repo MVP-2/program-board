@@ -32,6 +32,7 @@ docs/
 
 # Vercel
 .vercel
+.env.preview-temp
 
 # Debug
 npm-debug.log*

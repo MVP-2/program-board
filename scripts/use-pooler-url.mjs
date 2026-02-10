@@ -50,22 +50,33 @@ try {
 }
 
 const hostname = url.hostname;
-const match = hostname.match(/^db\.([a-z0-9]+)\.supabase\.co$/i);
-if (!match) {
+const poolerHost = `aws-0-${region}.pooler.supabase.com`;
+
+const poolerUrl = new URL(directUrl);
+
+// すでにプーラー URL の場合はリージョンだけ差し替え
+const poolerMatch = hostname.match(
+  /^aws-0-[a-z0-9-]+\.pooler\.supabase\.com$/i,
+);
+if (poolerMatch) {
+  poolerUrl.hostname = poolerHost;
+  poolerUrl.port = "6543";
+  console.log(poolerUrl.toString());
+  process.exit(0);
+}
+
+// 直接接続 URL からプーラー URL を生成
+const directMatch = hostname.match(/^db\.([a-z0-9]+)\.supabase\.co$/i);
+if (!directMatch) {
   console.error(
-    "Supabase の直接接続 URL (db.xxx.supabase.co) を指定してください。",
+    "Supabase の直接接続 (db.xxx.supabase.co) またはプーラー URL を指定してください。",
   );
   process.exit(1);
 }
 
-const projectRef = match[1];
-const password = url.password;
-const poolerUser = `postgres.${projectRef}`;
-const poolerHost = `aws-0-${region}.pooler.supabase.com`;
-
-const poolerUrl = new URL(directUrl);
-poolerUrl.username = poolerUser;
-poolerUrl.password = password;
+const projectRef = directMatch[1];
+poolerUrl.username = `postgres.${projectRef}`;
+poolerUrl.password = url.password;
 poolerUrl.hostname = poolerHost;
 poolerUrl.port = "6543";
 
