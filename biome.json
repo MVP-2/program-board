@@ -1,7 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
   "files": {
-    "includes": ["**", "!!**/.next", "!!**/out", "!!**/dist", "!!**/build"]
+    "includes": [
+      "**",
+      "!!**/.next",
+      "!!**/out",
+      "!!**/dist",
+      "!!**/build",
+      "!!**/.vercel"
+    ]
   },
   "css": {
     "parser": { "cssModules": true, "tailwindDirectives": true }

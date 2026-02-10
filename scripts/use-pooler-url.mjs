@@ -35,7 +35,9 @@ const directUrl = getPostgresUrl();
 const region = process.env.REGION || "us-east-1";
 
 if (!directUrl) {
-  console.error("POSTGRES_URL を設定するか、.env.production.local のパスを引数で指定してください。");
+  console.error(
+    "POSTGRES_URL を設定するか、.env.production.local のパスを引数で指定してください。",
+  );
   process.exit(1);
 }
 
@@ -50,7 +52,9 @@ try {
 const hostname = url.hostname;
 const match = hostname.match(/^db\.([a-z0-9]+)\.supabase\.co$/i);
 if (!match) {
-  console.error("Supabase の直接接続 URL (db.xxx.supabase.co) を指定してください。");
+  console.error(
+    "Supabase の直接接続 URL (db.xxx.supabase.co) を指定してください。",
+  );
   process.exit(1);
 }
 
